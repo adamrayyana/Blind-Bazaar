@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Balatro Shop</title>
+    <title>Blind Bazaar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -14,19 +14,18 @@
     <main class="card">
         <header class="header">
             <div class="title">
-                <span class="title-badge">Tugas Individu PBP</span>
                 <h1>Blind Bazaar</h1>
             </div>
         </header>
-        <div class="marquee"><span>Welcome to the Blind Bazaar! — Improve your run </span></div>
+        <div class="marquee"><span>Welcome to the Blind Bazaar! — Improve your run! </span></div>
 
     </main>
 
     <section class="card">
         <div class="about">
-            <div class="pill">Name: {{ name|default:"Your Name" }}</div>
-            <div class="pill">NPM: {{ npm|default:"Your NPM" }}</div>
-            <div class="pill">Class: {{ class|default:"Your Class" }}</div>
+            <div class="pill">Name: {{ name }}</div>
+            <div class="pill">NPM: {{ npm }}</div>
+            <div class="pill">Class: {{ class }}</div>
         </div>
     </section>
 </body>
