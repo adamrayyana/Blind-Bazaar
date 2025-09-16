@@ -3,6 +3,7 @@ Tugas Individu 2 PBP oleh Adam Rayyan Aryasatya (NPM 2406496031)
 
 ## Link Deployment PWS
 http://adam-rayyan-blindbazaar.pbp.cs.ui.ac.id/
+
 ### Step-by-step *Checklist* Implementasi
 #### Membuat sebuah proyek Django baru.
 

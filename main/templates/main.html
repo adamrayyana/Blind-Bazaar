@@ -1,32 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static %}
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blind Bazaar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'main/styles.css' %}">
-</head>
-<body>
-    <main class="card">
-        <header class="header">
-            <div class="title">
-                <h1>Blind Bazaar</h1>
-            </div>
-        </header>
-        <div class="marquee"><span>Improve your football match with high quality power ups!</span></div>
+{% extends 'base.html' %}
 
-    </main>
+{% block title %}Blind Bazaar{% endblock title %}
 
-    <section class="card">
-        <div class="about">
-            <div class="pill">Name: {{ name }}</div>
-            <div class="pill">NPM: {{ npm }}</div>
-            <div class="pill">Class: {{ class }}</div>
+{% block content %}
+<main class="card">
+    <header class="header">
+        <div class="title">
+            <h1>Blind Bazaar</h1>
         </div>
-    </section>
-</body>
-</html>
+    </header>
+    <div class="marquee">
+        <p>Improve your football match with cards and other power-ups!</p>
+        {% if products %}
+        <p>Now featuring {{ product_count }} high quality items.</p>
+        {% else %}
+        <p>Currently no items available. Consider adding them!</p>
+        {% endif %}
+    </div>
+
+</main>
+
+<section class="card">
+    <div class="about">
+        <div class="pill">Name: {{ name }}</div>
+        <div class="pill">NPM: {{ npm }}</div>
+        <div class="pill">Class: {{ class }}</div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="shop">
+        {% if products %}
+        <div class="grid">
+            {% for product in products %}
+            <article class="shop-item">
+                {% if product.thumbnail %}
+                <div class="thumbnail">
+                    <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
+                </div>
+                {% endif %}
+                <h3>{{ product.name }}</h3>
+                <p class="price">${{ product.price }}</p>
+                <p class="meta">{{ product.get_rarity_display }} {{ product.get_category_display }}</p>
+                <p class="description">{{ product.description }}</p>
+                <div class="card-actions">
+                    <a class="buy-btn" href="{% url 'main:product_detail' product.id %}">Detail</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        {% endif %}
+    </div>
+    <div class=""add-product-container>
+        <a class="buy-btn" href="{% url 'main:product_add' %}">Add Product</a>
+    </div>
+</section>
+
+{% endblock content %}

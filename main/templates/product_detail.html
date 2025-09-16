@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="card detail-card">
+    <header class="header">
+        <div class="title">
+            <h1>{{ product.name }}</h1>
+        </div>
+        <a class="buy-btn" href="{% url 'main:index' %}">Back to Shop</a>
+    </header>
+
+    <section class="detail-grid">
+        {% if product.thumbnail %}
+        <div class="detail-thumbnail">
+            <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail">
+        </div>
+        {% endif %}
+        <div class="detail-info"> 
+            <p class="price">${{ product.price }}</p>
+            <p class="product-detail">{{ product.get_rarity_display }} {{ product.get_category_display }}  </p>
+            <p class="product-date">{{ product.created_at|date:"d M Y, H:i" }}</p>
+            <section class="card">
+                <p class="description">{{ product.description }}</p>
+            </section>
+        </div>
+    </section>
+</main>
+{% endblock content %}
