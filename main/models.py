@@ -4,11 +4,10 @@ from django.db import models
 # Create your models here.
 class Product(models.Model):
     CATEGORY_CHOICES = [
-        ('joker', 'Joker'),
-        ('tarot', 'Tarot Card'),
-        ('spectral', 'Spectral Card'),
-        ('planet', 'Planet Card'),
-        ('voucher', 'Voucher'),
+        ('photocard', 'Photocard'),
+        ('jersey', 'Jersey Card'),
+        ('event', 'Event Card'),
+        ('sponsorship', 'Sponsorship'),
         ('pack', 'Booster Pack'),
     ]
 
