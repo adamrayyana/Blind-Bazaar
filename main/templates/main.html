@@ -24,12 +24,18 @@
 <section class="card">
     <div>
         <div class="welcome">
-            <h2>Welcome back, test!</h2>
+            <h2>Welcome, {{ name }}!</h2>
         </div>
         <div class="last-login">
             <div class="pill">
                 <span> Last login session: {{ last_login }}</span>
             </div>
+        </div>
+        <div>
+            <div class="about">
+            <div class="pill">Name: {{ name }}</div>
+            <div class="pill">NPM: {{ npm }}</div>
+            <div class="pill">Class: {{ class }}</div>
         </div>
         <div class="logout">
             <a href="{% url 'main:logout' %}" class="buy-btn">Logout</a>
@@ -37,13 +43,7 @@
     </div>
 </section>
 
-<section class="card">
-    <div class="about">
-        <div class="pill">Name: {{ name }}</div>
-        <div class="pill">NPM: {{ npm }}</div>
-        <div class="pill">Class: {{ class }}</div>
-    </div>
-</section>
+
 
 <section class="card">
     <div class="shop">
