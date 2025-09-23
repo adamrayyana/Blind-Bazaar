@@ -21,7 +21,13 @@
             <section class="card">
                 <p class="description">{{ product.description }}</p>
             </section>
+            {% if news.user %}
+                <p>Author: {{ news.user.username }}</p>
+            {% else %}
+                <p>Author: Anonymous</p>
+            {% endif %}
         </div>
+
     </section>
 </main>
 {% endblock content %}

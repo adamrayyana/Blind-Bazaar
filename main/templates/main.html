@@ -20,6 +20,23 @@
 
 </main>
 
+<!-- banner buat last login dll -->
+<section class="card">
+    <div>
+        <div class="welcome">
+            <h2>Welcome back, test!</h2>
+        </div>
+        <div class="last-login">
+            <div class="pill">
+                <span> Last login session: {{ last_login }}</span>
+            </div>
+        </div>
+        <div class="logout">
+            <a href="{% url 'main:logout' %}" class="buy-btn">Logout</a>
+        </div>
+    </div>
+</section>
+
 <section class="card">
     <div class="about">
         <div class="pill">Name: {{ name }}</div>
@@ -30,6 +47,8 @@
 
 <section class="card">
     <div class="shop">
+        <a class="buy-btn" href="?filter=all">All Products</a>
+        <a class="buy-btn" href="?filter=my" >My Products</a> 
         {% if products %}
         <div class="grid">
             {% for product in products %}
