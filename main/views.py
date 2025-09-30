@@ -49,6 +49,17 @@ def show_product_detail(request, id):
     return render(request, 'product_detail.html', context)
 
 
+@login_required(login_url='/login')
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id, user=request.user)
+    form = ProductForm(request.POST or None, instance=product)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('main:product_detail', product.id)
+    context = { 'form': form }
+    return render(request, "edit_product.html", context)
+
+
 def show_xml(request):
     data = Product.objects.all()
     return HttpResponse(serializers.serialize('xml', data), content_type='application/xml')
@@ -105,3 +116,4 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+

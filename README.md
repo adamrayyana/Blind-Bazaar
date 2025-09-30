@@ -321,7 +321,7 @@ https://drive.google.com/drive/folders/103hKEcRFJy_h8G-MBgF1KHQxDTFGBtBt?usp=sha
     ```py
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     ```
-    Baris tersebut akan menghubungkan `User` dan `Product` melalui relationship sehingga setiap `News` memiliki `User` yang terasosiasi dengannya.
+    Baris tersebut akan menghubungkan `User` dan `Product` melalui relationship sehingga setiap `Product` memiliki `User` yang terasosiasi dengannya.
 
 -   Buat file migrasi dengan `python manage.py makemigrations` dan lakukan migrasi dengan `python manage.py migrate`
 

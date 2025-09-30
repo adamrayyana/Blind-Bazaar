@@ -64,6 +64,9 @@
                 <p class="description">{{ product.description }}</p>
                 <div class="card-actions">
                     <a class="buy-btn" href="{% url 'main:product_detail' product.id %}">Detail</a>
+                    {% if product.user == user %}
+                    <a class="buy-btn" href="{% url 'main:edit_product' product.id %}">Edit</a>
+                    {% endif %}
                 </div>
             </article>
             {% endfor %}
