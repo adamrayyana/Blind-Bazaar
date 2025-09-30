@@ -1,34 +1,59 @@
-{% extends 'base.html' %}
-
-{% block meta %}
-<title>Login</title>
-{% endblock meta %}
+﻿{% extends 'base.html' %}
+{% block title %}Login - Blind Bazaar{% endblock title %}
 
 {% block content %}
-<section class="card">
-    <div class="title">
-        <h1>Login</h1>
+
+<div class="min-h-screen pt-24 pb-16 flex items-center justify-center px-4">
+  <div class="w-full max-w-md">
+    <div class="form-style overflow-hidden rounded-3xl border border-blue-100 bg-white">
+      <div class="bg-blue-600 px-6 py-6 text-center text-white sm:px-8 sm:py-8">
+        <h1 class="text-2xl font-semibold">Sign in</h1>
+        <p class="mt-2 text-sm text-white/80">Welcome back to Blind Bazaar</p>
+      </div>
+
+      <div class="px-6 py-6 sm:px-8 sm:py-8">
+        {% if form.non_field_errors %}
+          <div class="mb-6 space-y-2">
+            {% for error in form.non_field_errors %}
+              <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="POST" class="space-y-5">
+          {% csrf_token %}
+          {% for field in form %}
+            <div>
+              <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-medium text-gray-700">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}
+                <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ field.errors|join:', ' }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white">Sign In</button>
+        </form>
+
+        {% if messages %}
+          <div class="mt-6 space-y-2">
+            {% for message in messages %}
+              <div class="rounded-md border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="mt-6 border-t border-blue-50 pt-6 text-center text-sm text-gray-600">
+          <p>
+            Don't have an account?
+            <a href="{% url 'main:register' %}" class="font-semibold text-indigo-600 transition-colors duration-200 hover:text-indigo-700">Register now</a>
+          </p>
+        </div>
+      </div>
     </div>
-
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="buy-btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
-
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a class="buy-btn" href="{% url 'main:register' %}">Register Now</a>
-</section>
+  </div>
+</div>
 
 {% endblock content %}

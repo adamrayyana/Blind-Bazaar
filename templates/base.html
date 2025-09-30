@@ -3,15 +3,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block meta %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="light">
+    {% endblock meta %}
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>{% block title %}Blind Bazaar{% endblock title %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'main/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
     {% block extra_head %}{% endblock extra_head %}
 </head>
-<body>
+<body class="min-h-screen font-sans text-gray-900 bg-blue-50 antialiased">
     {% block content %}{% endblock content %}
 </body>
 </html>

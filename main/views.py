@@ -26,7 +26,8 @@ def show_index(request):
         'class': 'PBP A',
         'products': products,
         'product_count': products.count(),
-        'last_login': request.COOKIES.get('last_login', 'Never')
+        'last_login': request.COOKIES.get('last_login', 'Never'),
+        'active_filter': filter_type,
     }
     return render(request, 'main.html', context)
 
@@ -59,6 +60,11 @@ def edit_product(request, id):
     context = { 'form': form }
     return render(request, "edit_product.html", context)
 
+@login_required(login_url='/login')
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:index'))
 
 def show_xml(request):
     data = Product.objects.all()
@@ -116,4 +122,3 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
-

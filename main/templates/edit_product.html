@@ -1,26 +1,50 @@
 {% extends 'base.html' %}
-{% block content %}
-<main class="card form-card">
-    <header class="header">
-        <div class="title">
-            <h1>Edit Product</h1>
-        </div>
-        <a class="buy-btn" href="{% url 'main:index' %}">Back</a>
-    </header>
+{% block title %}Edit Product - Blind Bazaar{% endblock title %}
 
-    <form method="POST" class="product-form">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="form-grid">
-            {% for field in form %}
-            <div class="form-field">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+{% block content %}
+
+<div class="min-h-screen pt-24 pb-16">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <a href="{% url 'main:index' %}" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 transition-colors duration-200 hover:text-gray-900">
+        Back to Shop
+      </a>
+    </div>
+
+    <div class="form-style overflow-hidden rounded-3xl border border-blue-100 bg-white">
+      <div class="bg-blue-600 px-6 py-6 sm:px-10 sm:py-8 text-white">
+        <h1 class="text-2xl font-semibold">Edit Product</h1>
+        <p class="mt-2 text-sm text-white/80">Refresh your listing with new stats, art, or highlights.</p>
+      </div>
+
+      <div class="px-6 py-6 sm:px-10 sm:py-8">
+        <form method="POST" class="space-y-6">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          {% for field in form %}
+            <div>
+              <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-medium text-gray-700">{{ field.label }}</label>
+              <div class="w-full">
                 {{ field }}
+              </div>
+              {% if field.help_text %}
+                <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+              {% endif %}
+              {% for error in field.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        <button type="submit" class="buy-btn">Save Changes</button>
-    </form>
-</main>
+          {% endfor %}
+
+          <div class="flex flex-col gap-4 border-t border-blue-50 pt-6 sm:flex-row">
+            <a href="{% url 'main:index' %}" class="order-2 inline-flex flex-1 items-center justify-center rounded-full border border-blue-100 px-6 py-3 text-sm font-semibold text-gray-600 transition-colors duration-200 hover:bg-blue-50 sm:order-1">Cancel</a>
+            <button type="submit" class="order-1 inline-flex flex-1 items-center justify-center rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white sm:order-2">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
 

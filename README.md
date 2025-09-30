@@ -398,3 +398,75 @@ Session dan cookie sama-sama digunakan untuk menyimpan state di aplikasi web, te
 
 Secara default, cookies tidak `HttpOnly` yang berarti mereka rentan terhadap pencurian misal melalui attack XSS ataupun CSRF (tanpa `SameSite`/token).
 Django mengatasinya dengan session server‑side (cookie hanya berisi sessionid acak), `SESSION_COOKIE_HTTPONLY=True` dan `SESSION_COOKIE_SAMESITE='Lax'` secara default, opsi `Secure` untuk hanya terkirim lewat HTTPS, rotasi session key saat login untuk mencegah fixation, serta middleware CSRF dengan token per‑request. 
+
+
+## Tugas 5
+### Step-by-step *Checklist* Implementasi
+
+#### Implementasikan fungsi untuk menghapus dan mengedit product.
+-   Tambahkan kedua fungsi berikut ini, satu untuk menghapus dan satu untuk mengedit
+    ```py
+    @login_required(login_url='/login')
+    def delete_product(request, id):
+        product = get_object_or_404(Product, pk=id)
+        product.delete()
+        return HttpResponseRedirect(reverse('main:index'))
+    ```
+    ```py
+    @login_required(login_url='/login')
+    def edit_product(request, id):
+        product = get_object_or_404(Product, pk=id, user=request.user)
+        form = ProductForm(request.POST or None, instance=product)
+        if request.method == 'POST' and form.is_valid():
+            form.save()
+            return redirect('main:product_detail', product.id)
+        context = { 'form': form }
+        return render(request, "edit_product.html", context)
+    ```
+-   Buatlah template HTML untuk `edit_product.html`.
+-   Jangan lupa untuk menambahkan path url ke dalam `urlpatterns` pada `main/views.py`
+-   Pada `main.html` tambahkan tombol `Edit` dan `Delete` pada loop products.
+
+####  Kustomisasi desain pada template HTML yang telah dibuat pada tugas-tugas sebelumnya menggunakan CSS Framework (Tailwind)
+
+-   Tambahkan baris-baris berikut ini pada `base.html`
+    ```html
+    <head>
+    {% block meta %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% endblock meta %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    ```
+    Baris-baris tersebut berfungsi untuk mengatur viewport pada perangkat mobile serta untuk menambahkan Tailwind. 
+-   Konfigurasikan static files pada `settings.py` seperti berikut ini:
+    ```py
+    STATIC_URL = '/static/'
+    if DEBUG:
+        STATICFILES_DIRS = [
+            BASE_DIR / 'static' 
+        ]
+    else:
+        STATIC_ROOT = BASE_DIR / 'static' 
+    ```
+-   Tambahkan baris `{ % load static % }` pada setiap template HTML yang membutuhkannya.
+-   Lakukan styling pada tiap HTML.
+
+#### Integrasi Navbar Responsif
+- Buat `<nav>` pada `base.html` dengan Tailwind (`fixed top-0`, `md:flex`, `md:hidden`).  
+- Tambahkan tombol hamburger (`button.mobile-menu-button`) untuk mobile.  
+- Buat menu mobile dengan class `mobile-menu hidden md:hidden`.  
+- Tambahkan script JS toggle untuk menampilkan/menyembunyikan menu.  
+
+### Urutan Prioritas CSS Selector 
+Ketika sebuah elemen HTML memiliki beberapa aturan CSS yang bisa diterapkan padanya, browser akan menentukan aturan mana yang digunakan berdasarkan konsep specificity atau tingkat kekhususan selector. Prioritas ini ditentukan dengan menghitung skor specificity dari masing-masing selector. Selector inline memiliki prioritas tertinggi, kemudian diikuti oleh selector ID (`#id`), lalu selector class, attribute, dan terakhir adalah selector tag atau elemen (div, p, section). Jika terdapat dua aturan dengan specificity yang sama, maka aturan yang dideklarasikan terakhir di file CSS akan dijadiin prioritas. Selain itu, deklarasi dengan `!important` akan mengalahkan semua aturan lainnya kecuali ada aturan lain dengan `!important dan s`pecificity lebih tinggi. Dengan memahami urutan ini, developer dapat menghindari konflik gaya yang sulit dilacak dan membuat styling lebih konsisten.
+
+### Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh dan jelaskan mengapa.
+Responsive design adalah pendekatan desain web di mana tampilan dan fungsi suatu situs atau aplikasi menyesuaikan secara dinamis dengan ukuran layar dan perangkat pengguna, seperti desktop, tablet, atau smartphone. Konsep ini penting karena pengguna saat ini mengakses web dari berbagai macam perangkat dengan ukuran layar yang berbeda-beda. Tanpa responsive design, sebuah situs mungkin terlihat baik di komputer, namun rusak dan tidak terbaca di ponsel, sehingga menurunkan pengalaman pengguna. Contoh aplikasi yang sudah menerapkan responsive design adalah Twitter, yang menyesuaikan tampilannya di berbagai perangkat tanpa kehilangan fungsionalitas inti. Sebaliknya, situs lama seperti versi klasik dari detik.com atau forum-forum jadul sering belum responsive, sehingga pengguna harus melakukan zoom dan scroll horizontal ketika mengakses dari ponsel. Dengan menerapkan responsive design, pengembang memastikan aksesibilitas, kenyamanan, dan profesionalisme situs di mata pengguna.
+
+### Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+Margin, border, dan padding adalah tiga properti utama dalam model box CSS yang mengatur ruang dan batas pada elemen HTML. Margin adalah ruang kosong di luar border elemen yang digunakan untuk menciptakan jarak antara elemen satu dengan yang lain. Border adalah garis pembatas yang mengelilingi konten dan padding, berfungsi sebagai kerangka visual dari elemen. Padding adalah ruang antara konten elemen dan bordernya, yang memberi “nafas” bagi isi elemen. Contohnya, jika kita memiliki `<div>` dan kita menulis `margin: 10px; padding: 20px; border: 2px solid black;`, maka elemen tersebut akan memiliki jarak 10 piksel dari elemen lain, isi kontennya akan memiliki jarak 20 piksel dari garis border, dan bordernya sendiri memiliki ketebalan 2 piksel. Ketiga properti ini membantu dalam pengaturan tata letak dan estetika elemen secara presisi dalam halaman web.
+
+### Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+Flexbox  dan Grid Layout adalah dua sistem layout modern dalam CSS yang memudahkan penataan elemen di halaman web. Flexbox dirancang untuk tata letak satu dimensi—baik secara horizontal maupun vertikal. Ini sangat berguna untuk membuat komponen yang responsif seperti navbar, kartu produk, atau daftar item yang ukurannya fleksibel sesuai ruang yang tersedia. Misalnya, dengan `display: flex;` pada kontainer dan justify-content: space-between;, kita bisa membuat tiga tombol tersebar merata dalam satu baris. Sementara itu, Grid Layout lebih cocok untuk tata letak dua dimensi, di mana kita mengatur baris dan kolom secara bersamaan. Dengan `display: grid;`, kita dapat mendesain layout kompleks seperti list products, atau dashboard. Grid memungkinkan definisi ukuran area yang eksplisit dengan grid-template-columns dan grid-template-areas. 

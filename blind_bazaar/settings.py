@@ -146,11 +146,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# URL prefix for static files
 STATIC_URL = '/static/'
-
-# Absolute path where collectstatic will gather files for production serving
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static' 
+    ]
+else:
+    STATIC_ROOT = BASE_DIR / 'static' 
 
 # Optional: additional directories with project-level static assets (keep if needed)
 # STATICFILES_DIRS = [BASE_DIR / 'static']
