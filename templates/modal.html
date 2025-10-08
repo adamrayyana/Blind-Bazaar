@@ -1,0 +1,229 @@
+{% load static %}
+<div id="crudModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-slate-900/50 px-4 py-8 backdrop-blur-sm">
+  <div
+    id="crudModalContent"
+    class="w-full max-w-2xl transform overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-2xl transition-all duration-200 opacity-0 scale-95"
+  >
+    <div class="flex items-start justify-between border-b border-blue-100 px-6 py-5 sm:px-8">
+      <div>
+        <h3 id="product-modal-title" class="text-xl font-semibold text-gray-900">Create Product</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Fill in the form below to share a new product with everyone.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="rounded-full p-2 text-gray-400 transition hover:bg-blue-50 hover:text-gray-700"
+        onclick="hideModal()"
+        aria-label="Close modal"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L10 10.586 4.707 5.293A1 1 0 003.293 6.707L8.586 12l-5.293 5.293a1 1 0 101.414 1.414L10 13.414l5.293 5.293a1 1 0 001.414-1.414L11.414 12l5.293-5.293a1 1 0 000-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+
+    <form id="productForm" class="px-6 py-6 sm:px-8 space-y-5" novalidate>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label for="product-name" class="text-sm font-semibold text-gray-700">Name</label>
+          <input
+            type="text"
+            id="product-name"
+            name="name"
+            class="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            placeholder="Ex: Stellar Captain Card"
+            required
+            maxlength="255"
+          >
+          <p class="hidden text-xs text-rose-600" data-error-name></p>
+        </div>
+        <div class="space-y-2">
+          <label for="product-price" class="text-sm font-semibold text-gray-700">Price</label>
+          <input
+            type="number"
+            min="0"
+            id="product-price"
+            name="price"
+            class="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            placeholder="12000"
+            required
+          >
+          <p class="hidden text-xs text-rose-600" data-error-price></p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label for="product-description" class="text-sm font-semibold text-gray-700">Description</label>
+        <textarea
+          id="product-description"
+          name="description"
+          rows="4"
+          class="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          placeholder="Describe the product and why it matters for your team."
+          required
+        ></textarea>
+        <p class="hidden text-xs text-rose-600" data-error-description></p>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label for="product-category" class="text-sm font-semibold text-gray-700">Category</label>
+          <select
+            id="product-category"
+            name="category"
+            class="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            required
+          >
+            <option value="">Select category</option>
+            <option value="photocard">Photocard</option>
+            <option value="gear">Gear Card</option>
+            <option value="jersey">Jersey Card</option>
+            <option value="event">Event Card</option>
+            <option value="sponsorship">Sponsorship</option>
+            <option value="pack">Booster Pack</option>
+          </select>
+          <p class="hidden text-xs text-rose-600" data-error-category></p>
+        </div>
+        <div class="space-y-2">
+          <label for="product-rarity" class="text-sm font-semibold text-gray-700">Rarity</label>
+          <select
+            id="product-rarity"
+            name="rarity"
+            class="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            required
+          >
+            <option value="">Select rarity</option>
+            <option value="common">Common</option>
+            <option value="uncommon">Uncommon</option>
+            <option value="rare">Rare</option>
+            <option value="legendary">Legendary</option>
+          </select>
+          <p class="hidden text-xs text-rose-600" data-error-rarity></p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label for="product-thumbnail" class="text-sm font-semibold text-gray-700">Thumbnail URL</label>
+        <input
+          type="url"
+          id="product-thumbnail"
+          name="thumbnail"
+          class="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          placeholder="https://example.com/card-art.jpg"
+        >
+        <p class="hidden text-xs text-rose-600" data-error-thumbnail></p>
+      </div>
+
+      <div class="flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 px-4 py-3">
+        <input
+          type="checkbox"
+          id="product-featured"
+          name="is_featured"
+          class="h-4 w-4 rounded border-blue-200 text-blue-600 focus:ring-blue-400"
+        >
+        <label for="product-featured" class="text-sm text-gray-700">
+          Mark this product as featured
+        </label>
+      </div>
+    </form>
+
+    <div class="flex flex-col gap-3 border-t border-blue-100 bg-gray-50/60 px-6 py-5 sm:flex-row sm:justify-end sm:px-8">
+      <button
+        id="cancelButton"
+        type="button"
+        class="order-2 inline-flex items-center justify-center rounded-full border border-blue-100 px-5 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-blue-50 sm:order-1"
+        onclick="hideModal()"
+      >
+        Cancel
+      </button>
+      <button
+        id="product-submit-button"
+        type="submit"
+        form="productForm"
+        class="order-1 inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 sm:order-2"
+      >
+        Save product
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  id="product-delete-modal"
+  class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 py-8 backdrop-blur-sm"
+  aria-hidden="true"
+>
+  <div
+    id="product-delete-modal-content"
+    class="w-full max-w-md transform overflow-hidden rounded-3xl border border-rose-100 bg-white shadow-2xl transition-all duration-200"
+  >
+    <div class="px-6 py-6 text-center sm:px-8">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 text-2xl text-rose-500">
+        ⚠️
+      </div>
+      <h3 class="mt-6 text-lg font-semibold text-gray-900">Delete this product?</h3>
+      <p class="mt-2 text-sm text-gray-600">
+        This action cannot be undone. The product will be removed permanently.
+      </p>
+    </div>
+    <div class="flex flex-col gap-3 border-t border-rose-100 bg-rose-50/60 px-6 py-5 sm:flex-row sm:justify-end sm:px-8">
+      <button
+        type="button"
+        class="order-2 inline-flex items-center justify-center rounded-full border border-rose-100 px-5 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-white sm:order-1"
+        data-delete-cancel
+      >
+        Cancel
+      </button>
+      <button
+        id="product-delete-confirm-button"
+        type="button"
+        class="order-1 inline-flex items-center justify-center rounded-full bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700 sm:order-2"
+      >
+        Delete forever
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    if (!modal || !modalContent) return;
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      modalContent.classList.remove('opacity-0', 'scale-95');
+      modalContent.classList.add('opacity-100', 'scale-100');
+    }, 50);
+  }
+
+  function hideModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    if (!modal || !modalContent) return;
+
+    modalContent.classList.remove('opacity-100', 'scale-100');
+    modalContent.classList.add('opacity-0', 'scale-95');
+
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      document.dispatchEvent(new CustomEvent('productModal:closed'));
+    }, 150);
+  }
+
+  function dispatchProductFormSubmit() {
+    document.dispatchEvent(new CustomEvent('productForm:submit'));
+  }
+
+  const productForm = document.getElementById('productForm');
+  if (productForm) {
+    productForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      dispatchProductFormSubmit();
+    });
+  }
+</script>

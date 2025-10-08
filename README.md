@@ -8,8 +8,8 @@ http://adam-rayyan-blindbazaar.pbp.cs.ui.ac.id/
 - [Tugas 2](#tugas-2)
 - [Tugas 3](#tugas-3)
 - [Tugas 4](#tugas-4)
-
-
+- [Tugas 5](#tugas-5)
+- [Tugas 6](#tugas-6)
 ## Tugas 2
 
 ### Step-by-step *Checklist* Implementasi
@@ -470,3 +470,19 @@ Margin, border, dan padding adalah tiga properti utama dalam model box CSS yang 
 
 ### Jelaskan konsep flex box dan grid layout beserta kegunaannya!
 Flexbox  dan Grid Layout adalah dua sistem layout modern dalam CSS yang memudahkan penataan elemen di halaman web. Flexbox dirancang untuk tata letak satu dimensi—baik secara horizontal maupun vertikal. Ini sangat berguna untuk membuat komponen yang responsif seperti navbar, kartu produk, atau daftar item yang ukurannya fleksibel sesuai ruang yang tersedia. Misalnya, dengan `display: flex;` pada kontainer dan justify-content: space-between;, kita bisa membuat tiga tombol tersebar merata dalam satu baris. Sementara itu, Grid Layout lebih cocok untuk tata letak dua dimensi, di mana kita mengatur baris dan kolom secara bersamaan. Dengan `display: grid;`, kita dapat mendesain layout kompleks seperti list products, atau dashboard. Grid memungkinkan definisi ukuran area yang eksplisit dengan grid-template-columns dan grid-template-areas. 
+
+## Tugas6 
+
+### Perbedaan synchronous vs asynchronous.
+Synchronous request menunggu respons server sebelum halaman bisa lanjut—browser “berhenti” sampai selesai (full page reload). Asynchronous request mengirim permintaan di belakang layar. halaman tetap interaktif, dan hanya bagian tertentu yang diperbarui (partial update). Hasilnya, async terasa lebih cepat dan responsif, sedangkan sync sederhana tapi kurang mulus untuk UI modern.
+### Bagaimana AJAX bekerja di Django.
+Frontend (JS via fetch()/XHR) mengirim request ke URL Django (view)—biasanya POST/GET—dengan header & data (termasuk CSRF token). View memproses (query DB, validasi) lalu mengembalikan JSON/HTML fragment. JS menerima respons, lalu memperbarui DOM (mis. mengganti isi <div>, menambah elemen, atau menampilkan notifikasi) tanpa reload halaman. Alur: JS → URLconf → View → (Model/logic) → Response (JSON/HTML) → JS update UI.
+
+### Keuntungan AJAX dibanding render biasa di Django.
+Lebih cepat dirasa (lebih sedikit data/HTML dikirim), interaksi mulus tanpa reload, bandwidth hemat, dan UX lebih baik untuk aksi kecil (like, form inline, search live). Di sisi dev, kita bisa pisahkan concerns: view regular untuk halaman penuh, endpoint ringan untuk data (JSON). Kekurangannya: sedikit lebih kompleks (JS, error handling client-side, state sinkronisasi).
+
+### Keamanan AJAX untuk Login/Register di Django.
+Selalu pakai HTTPS, aktifkan dan kirim CSRF token pada POST (Django sudah sediakan csrftoken cookie + header X-CSRFToken). Validasi dan sanitasi input di server (jangan percaya client). Rate-limit/brute-force protection, set cookie aman (HttpOnly, Secure, SameSite=Lax/Strict). Tampilkan pesan error generik, log percobaan gagal, dan hindari bocornya detail validasi jika berisiko enumeration.
+
+### Dampak AJAX pada User Experience.
+AJAX membuat aplikasi menjadi lebih responsif dengan feedback instan (seperti toast), dan interactivity. Pengguna bisa tetap di konteks yang sama saat data diperbarui, sehingga beban kognitif lebih rendah. Pastikan ada indikator loading/error yang jelas. Tanpa itu, UX bisa membingungkan meski cepat.

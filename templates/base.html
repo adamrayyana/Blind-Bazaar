@@ -9,6 +9,7 @@
         <meta name="color-scheme" content="light">
     {% endblock meta %}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
     <title>{% block title %}Blind Bazaar{% endblock title %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,5 +19,8 @@
 </head>
 <body class="min-h-screen font-sans text-gray-900 bg-blue-50 antialiased">
     {% block content %}{% endblock content %}
+    {% include 'toast.html' %}
+    {% include 'modal.html' %}
+    {% block extra_scripts %}{% endblock extra_scripts %}
 </body>
 </html>

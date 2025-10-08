@@ -1,68 +1,156 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
-{% block title %}{{ product.name }} - Blind Bazaar{% endblock title %}
-{% load static %}
-{% block content %}
 
-<div class="min-h-screen pt-24 pb-16">
-  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8">
-    <section class="rounded-3xl bg-blue-600 text-white">
-      <div class="px-8 py-10 sm:px-10 sm:py-12">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 class="text-3xl font-bold leading-tight sm:text-4xl">{{ product.name }}</h1>
-            <div class="mt-3 flex flex-wrap items-center gap-3">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide bg-white/25 text-white">{{ product.get_category_display }}</span>
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide {% if product.rarity == 'common' %}bg-slate-200 text-slate-900{% elif product.rarity == 'uncommon' %}bg-emerald-200 text-emerald-900{% elif product.rarity == 'rare' %}bg-blue-200 text-blue-900{% elif product.rarity == 'legendary' %}bg-amber-200 text-amber-900{% else %}bg-slate-200 text-slate-900{% endif %}">
-                {{ product.get_rarity_display }}
-              </span>
+{% block title %}Product Detail - Blind Bazaar{% endblock title %}
+
+{% block extra_head %}
+  <script src="{% static 'js/products.js' %}" defer></script>
+  <script src="{% static 'js/product-detail.js' %}" defer></script>
+{% endblock extra_head %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div
+  id="product-page-root"
+  data-products-endpoint="{% url 'main:products_collection' %}"
+  data-product-resource-template="{% url 'main:product_resource' '00000000-0000-0000-0000-000000000000' %}"
+  data-product-detail-template="{% url 'main:product_detail' '00000000-0000-0000-0000-000000000000' %}"
+  data-placeholder-image="{% static 'images/no_image.jpeg' %}"
+  class="hidden"
+  aria-hidden="true"
+></div>
+
+<main
+  id="product-detail-root"
+  class="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white pt-24 pb-16"
+  data-product-id="{{ product.id }}"
+  data-resource-template="{% url 'main:product_resource' '00000000-0000-0000-0000-000000000000' %}"
+  data-placeholder-image="{% static 'images/no_image.jpeg' %}"
+  data-home-url="{% url 'main:index' %}"
+>
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-8 flex items-center justify-between gap-3">
+      <a
+        href="{% url 'main:index' %}"
+        class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+      >
+        ← Back to Shop
+      </a>
+      <div id="detail-actions" class="hidden items-center gap-3">
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+          data-action="edit"
+        >
+          Edit product
+        </button>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-100"
+          data-action="delete"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <div id="detail-loading" class="rounded-3xl border border-blue-100 bg-blue-50/80 px-8 py-10 text-center text-blue-700">
+      <svg class="mx-auto h-10 w-10 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="mt-4 text-sm font-semibold">Loading product details...</p>
+    </div>
+
+    <div id="detail-error" class="hidden rounded-3xl border border-rose-100 bg-rose-50 px-8 py-10 text-center text-rose-600">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-3xl">🛑</div>
+      <h2 class="mt-5 text-lg font-semibold">Unable to load product</h2>
+      <p class="mt-2 text-sm">Something went wrong while fetching the data. Please try again.</p>
+      <button
+        type="button"
+        class="mt-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-700"
+        data-detail-retry
+      >
+        Retry
+      </button>
+    </div>
+
+    <article
+      id="detail-article"
+      aria-live="polite"
+      class="hidden overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-lg"
+    >
+      <div class="grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
+        <div class="space-y-6">
+          <div class="relative overflow-hidden rounded-3xl border border-blue-100 bg-blue-50/60">
+            <img
+              id="detail-thumbnail"
+              src=""
+              alt=""
+              class="hidden h-full w-full max-h-[28rem] object-cover"
+            >
+            <div
+              id="detail-placeholder"
+              class="flex h-full min-h-[18rem] w-full items-center justify-center text-5xl text-blue-400"
+            >
+              🎴
+            </div>
+            <div id="detail-featured" class="hidden absolute top-4 right-4 rounded-full bg-amber-200 px-4 py-2 text-xs font-semibold text-amber-800 shadow">
+              Featured product
             </div>
           </div>
-          <a href="{% url 'main:index' %}" class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-blue-700">
-            Back to Shop
-          </a>
+
+          <section class="rounded-3xl border border-blue-100 bg-white/70 p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-gray-900">Description</h2>
+            <p id="detail-description" class="mt-3 text-sm leading-relaxed text-gray-600 whitespace-pre-line">
+              Loading description...
+            </p>
+          </section>
         </div>
+
+        <aside class="space-y-6">
+          <section class="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 p-6 text-white shadow">
+            <div id="detail-badges" class="flex flex-wrap items-center gap-2"></div>
+            <h1 id="detail-title" class="mt-4 text-2xl font-bold leading-tight">
+              Loading title...
+            </h1>
+            <p id="detail-subtitle" class="mt-2 text-sm text-white/80">
+              Product overview
+            </p>
+            <div class="mt-6 flex flex-wrap items-center gap-4">
+              <div class="rounded-2xl bg-white/15 px-4 py-3 text-center">
+                <p class="text-xs uppercase tracking-widest text-white/70">Price</p>
+                <p id="detail-price" class="mt-1 text-xl font-semibold text-white">$0</p>
+              </div>
+              <div class="rounded-2xl bg-white/15 px-4 py-3 text-center">
+                <p class="text-xs uppercase tracking-widest text-white/70">Rarity</p>
+                <p id="detail-rarity" class="mt-1 text-sm font-semibold text-white">Common</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-3xl border border-blue-100 bg-white/70 p-6 shadow-sm">
+            <h3 class="text-base font-semibold text-gray-900">Product information</h3>
+            <dl class="mt-4 space-y-3 text-sm text-gray-600">
+              <div>
+                <dt class="font-semibold text-gray-800">Category</dt>
+                <dd id="detail-category" class="mt-1">-</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-800">Created at</dt>
+                <dd id="detail-created" class="mt-1">-</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-gray-800">Owner</dt>
+                <dd id="detail-owner" class="mt-1">-</dd>
+              </div>
+            </dl>
+          </section>
+        </aside>
       </div>
-    </section>
-
-    <section class="grid gap-8 md:grid-cols-2">
-      <div class="overflow-hidden rounded-2xl border border-blue-100 bg-white">
-        {% if product.thumbnail %}
-          <img src="{{ product.thumbnail }}" alt="{{ product.name }} thumbnail" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='{% static 'images/no_image.jpeg' %}'">
-        {% else %}
-          <img src="{% static 'images/no_image.jpeg' %}" alt="No image available" class="h-full w-full object-cover">
-        {% endif %}
-      </div>
-
-      <div class="space-y-5">
-        <div class="rounded-2xl border border-blue-100 bg-white p-6">
-          <div class="flex items-center justify-between">
-            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-blue-600 text-white">${{ product.price }}</span>
-            <span class="text-xs text-gray-500">Added {{ product.created_at|date:"d M Y, H:i" }}</span>
-          </div>
-          <p class="mt-4 text-sm leading-relaxed text-gray-700">{{ product.description }}</p>
-        </div>
-
-        <div class="rounded-2xl border border-blue-100 bg-white p-6 text-sm text-gray-600">
-          <p class="font-semibold text-gray-800">Author</p>
-          <p class="mt-1">
-            {% if product.user %}
-              {{ product.user.username }}
-            {% else %}
-              Anonymous
-            {% endif %}
-          </p>
-        </div>
-
-        {% if user.is_authenticated and product.user == user %}
-        <div class="flex flex-wrap items-center gap-3">
-          <a href="{% url 'main:edit_product' product.id %}" class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white">Edit Product</a>
-          <a href="{% url 'main:delete_product' product.id %}" class="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-semibold text-rose-600 transition-colors duration-200 hover:bg-rose-100">Delete</a>
-        </div>
-        {% endif %}
-      </div>
-    </section>
+    </article>
   </div>
-</div>
+</main>
 
 {% endblock content %}

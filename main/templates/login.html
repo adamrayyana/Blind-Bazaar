@@ -1,59 +1,60 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
+{% load static %}
 {% block title %}Login - Blind Bazaar{% endblock title %}
 
-{% block content %}
+{% block extra_head %}
+  <script src="{% static 'js/auth.js' %}" defer></script>
+{% endblock extra_head %}
 
-<div class="min-h-screen pt-24 pb-16 flex items-center justify-center px-4">
+{% block content %}
+<main class="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 via-white to-white px-4 pt-24 pb-16">
   <div class="w-full max-w-md">
-    <div class="form-style overflow-hidden rounded-3xl border border-blue-100 bg-white">
-      <div class="bg-blue-600 px-6 py-6 text-center text-white sm:px-8 sm:py-8">
+    <section class="form-style overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-lg">
+      <header class="bg-blue-600 px-6 py-8 text-center text-white sm:px-8">
         <h1 class="text-2xl font-semibold">Sign in</h1>
-        <p class="mt-2 text-sm text-white/80">Welcome back to Blind Bazaar</p>
-      </div>
+        <p class="mt-2 text-sm text-white/80">Welcome back to Blind Bazaar.</p>
+      </header>
 
       <div class="px-6 py-6 sm:px-8 sm:py-8">
-        {% if form.non_field_errors %}
-          <div class="mb-6 space-y-2">
-            {% for error in form.non_field_errors %}
-              <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
+        <div id="auth-alert" class="hidden rounded-2xl border px-4 py-3 text-sm font-medium" role="alert"></div>
 
-        <form method="POST" class="space-y-5">
+        <form
+          method="POST"
+          novalidate
+          class="mt-6 space-y-5"
+          data-auth-form
+          data-auth-type="login"
+        >
           {% csrf_token %}
           {% for field in form %}
-            <div>
-              <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-medium text-gray-700">{{ field.label }}</label>
+            <div data-field="{{ field.name }}" class="space-y-2">
+              <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                {{ field.label }}
+              </label>
               {{ field }}
               {% if field.help_text %}
-                <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                <p class="text-xs text-gray-500">{{ field.help_text }}</p>
               {% endif %}
-              {% if field.errors %}
-                <p class="mt-1 text-sm text-red-600">{{ field.errors|join:', ' }}</p>
-              {% endif %}
+              <p class="hidden text-xs font-medium text-rose-600" data-error-for="{{ field.name }}"></p>
             </div>
           {% endfor %}
-          <button type="submit" class="w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white">Sign In</button>
+          <button
+            type="submit"
+            class="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            data-auth-submit
+          >
+            Sign in
+          </button>
         </form>
 
-        {% if messages %}
-          <div class="mt-6 space-y-2">
-            {% for message in messages %}
-              <div class="rounded-md border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">{{ message }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-
-        <div class="mt-6 border-t border-blue-50 pt-6 text-center text-sm text-gray-600">
-          <p>
-            Don't have an account?
-            <a href="{% url 'main:register' %}" class="font-semibold text-indigo-600 transition-colors duration-200 hover:text-indigo-700">Register now</a>
-          </p>
-        </div>
+        <p class="mt-8 text-center text-sm text-gray-600">
+          Need an account?
+          <a href="{% url 'main:register' %}" class="font-semibold text-blue-600 transition hover:text-blue-700">
+            Register now
+          </a>
+        </p>
       </div>
-    </div>
+    </section>
   </div>
-</div>
-
+</main>
 {% endblock content %}

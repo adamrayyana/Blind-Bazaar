@@ -1,0 +1,14 @@
+{% load static %}
+<div
+  id="toast-component"
+  class="pointer-events-none fixed bottom-8 right-8 flex translate-y-16 items-start gap-4 rounded-2xl border border-transparent bg-white/90 px-6 py-4 text-slate-800 opacity-0 shadow-xl backdrop-blur transition-all duration-300 sm:px-7 sm:py-5"
+  role="status"
+  aria-live="polite"
+>
+  <div id="toast-icon" class="text-2xl"></div>
+  <div class="max-w-xs">
+    <h3 id="toast-title" class="text-sm font-semibold">Toast Title</h3>
+    <p id="toast-message" class="mt-1 text-xs text-slate-600">Toast message</p>
+  </div>
+</div>
+<script src="{% static 'js/toast.js' %}"></script>
