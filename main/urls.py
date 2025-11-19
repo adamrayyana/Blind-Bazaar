@@ -17,5 +17,7 @@ urlpatterns = [
     path('json/<uuid:id>/', views.show_json_by_id, name='show_json_by_id'),
     path('register/', views.register, name='register'),
     path('login/', views.login_user, name='login'),
-    path('logout/', views.logout_user, name='logout')
+    path('logout/', views.logout_user, name='logout'),
+    path('proxy-image/', views.proxy_image, name='proxy_image'),
+    path('create-flutter/', views.create_product_flutter, name='create_product_flutter'),
 ]

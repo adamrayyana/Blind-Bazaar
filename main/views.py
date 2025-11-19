@@ -1,7 +1,9 @@
 import datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
 import json
 from typing import Any, Dict
-
+import requests
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -91,7 +93,7 @@ def _extract_json(request):
 @require_http_methods(['GET', 'POST'])
 def products_collection(request):
     if request.method == 'GET':
-        filter_type = request.GET.get('filter', 'all')
+        filter_type = request.GET.get('filter', 'my')
         queryset = Product.objects.all().order_by('-created_at')
         if filter_type == 'my':
             queryset = queryset.filter(user=request.user)
@@ -164,8 +166,9 @@ def show_xml(request):
     return HttpResponse(serializers.serialize('xml', data), content_type='application/xml')
 
 
+@login_required(login_url='/login')
 def show_json(request):
-    data = Product.objects.all()
+    data = Product.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', data), content_type='application/json')
 
 
@@ -176,8 +179,9 @@ def show_xml_by_id(request, id):
         content_type='application/xml',
     )
 
+@login_required(login_url='/login')
 def show_json_by_id(request, id):
-    product = get_object_or_404(Product, pk=id)
+    product = get_object_or_404(Product, pk=id, user=request.user)
     return HttpResponse(
         serializers.serialize('json', [product]),
         content_type='application/json',
@@ -241,3 +245,91 @@ def logout_user(request):
         response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+
+### FLUTTER
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
+    
+@csrf_exempt
+def create_product_flutter(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "error", "message": "Authentication is required."}, status=401)
+
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+    # pbp_django_auth mengirimkan form-encoded data, jadi ambil dari request.POST terlebih dahulu.
+    data = request.POST
+    if not data:
+        # Fallback jika body dikirim sebagai JSON mentah.
+        try:
+            data = json.loads(request.body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"status": "error", "message": "Invalid payload."}, status=400)
+
+    category_map = {
+        'photocard': 'photocard',
+        'photo card': 'photocard',
+        'gear': 'gear',
+        'gear card': 'gear',
+        'jersey': 'jersey',
+        'jersey card': 'jersey',
+        'event': 'event',
+        'event card': 'event',
+        'sponsorship': 'sponsorship',
+        'booster pack': 'pack',
+        'pack': 'pack',
+    }
+    rarity_map = {
+        'common': 'common',
+        'uncommon': 'uncommon',
+        'rare': 'rare',
+        'legendary': 'legendary',
+    }
+
+    def _map_choice(value: Any, mapping: Dict[str, str], default: str) -> str:
+        lookup = str(value or '').strip().lower()
+        return mapping.get(lookup, default)
+
+    name = strip_tags(data.get("name", ""))
+    description = strip_tags(data.get("description", ""))
+    category = _map_choice(data.get("category"), category_map, 'photocard')
+    rarity = _map_choice(data.get("rarity"), rarity_map, 'common')
+    thumbnail = data.get("thumbnail", "") or None
+    is_featured = bool(data.get("is_featured", False))
+    try:
+        price = int(data.get("price", 0))
+    except (TypeError, ValueError):
+        price = 0
+
+    product = Product(
+        user=request.user,
+        name=name,
+        price=price,
+        description=description,
+        category=category,
+        rarity=rarity,
+        thumbnail=thumbnail,
+        is_featured=is_featured,
+    )
+    product.save()
+
+    return JsonResponse({"status": "success", "item": _serialize_product(product, current_user=request.user)}, status=201)
